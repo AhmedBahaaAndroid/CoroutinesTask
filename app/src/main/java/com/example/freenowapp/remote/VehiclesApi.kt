@@ -1,6 +1,5 @@
 package com.example.freenowapp.remote
 
-import com.example.freenowapp.remote.model.RemoteVehicle
 import com.example.freenowapp.remote.model.RemoteVehicleResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
