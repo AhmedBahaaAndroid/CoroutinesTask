@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">freeNowApp</string>
+    <string name="fleet_type">Fleet type: %1$s</string>
+    <string name="heading">Heading : %s</string>
 </resources>

@@ -10,7 +10,6 @@ import com.example.freenowapp.remote.model.FleetType
 import com.example.freenowapp.ui.homeView.uiModel.VehicleUIModel
 
 class VehiclesAdapter(
-    private val listener: VehicleClickListener,
     private var carsList: List<VehicleUIModel>
 ) : RecyclerView.Adapter<VehiclesAdapter.ViewHolder>() {
 
@@ -21,17 +20,15 @@ class VehiclesAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(carsList[position])
-        holder.itemView.setOnClickListener {
-            carsList[position].id?.let { id -> listener.onVehicleCardClicked(id) }
-
-        }
     }
 
     class ViewHolder private constructor(private val binding: VehicalCardItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: VehicleUIModel) {
             with(binding) {
-                vehicalType.text = item.fleetType?.name
+                vehicalType.text =
+                    itemView.context.getString(R.string.fleet_type, item.fleetType?.name?.lowercase() )
+                vehicalHeading.text = itemView.context.getString(R.string.heading, item.heading.toString())
                 Glide.with(itemView.context)
                     .asBitmap()
                     .fitCenter()
@@ -53,9 +50,5 @@ class VehiclesAdapter(
                 return ViewHolder(binding)
             }
         }
-    }
-
-    interface VehicleClickListener {
-        fun onVehicleCardClicked(position: Int)
     }
 }

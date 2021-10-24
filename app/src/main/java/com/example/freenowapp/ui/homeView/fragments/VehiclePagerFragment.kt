@@ -13,13 +13,13 @@ import com.example.freenowapp.databinding.FragmentVehicalsPagerBinding
 import com.example.freenowapp.ui.homeView.adapters.VehiclesAdapter
 import com.example.freenowapp.ui.homeView.uiModel.VehicleUIModel
 import com.example.freenowapp.ui.homeView.viewModel.VehiclesViewModel
-import com.example.freenowapp.utils.Status
+import com.example.freenowapp.utils.px
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
-class VehiclePagerFragment : Fragment(), VehiclesAdapter.VehicleClickListener {
+class VehiclePagerFragment : Fragment() {
     private lateinit var binding: FragmentVehicalsPagerBinding
     private lateinit var viewPagerListener: ViewPager2.OnPageChangeCallback
-    private lateinit var carPagerAdapter: VehiclesAdapter
+    private lateinit var vehicalPagerAdapter: VehiclesAdapter
     private val shareViewModel by sharedViewModel<VehiclesViewModel>()
 
     override fun onCreateView(
@@ -39,29 +39,30 @@ class VehiclePagerFragment : Fragment(), VehiclesAdapter.VehicleClickListener {
 
     private fun observeViewModel() {
         shareViewModel.vehicles.observe(viewLifecycleOwner, Observer {
-            it ?: return@Observer
-            if (it.status == Status.SUCCESS) {
-                it.data?.let { vehicles -> setupViewPager(vehicles)}
-            }
+            setupViewPager(it)
         })
     }
-
 
     private fun setupViewPager(vehicalUIModels: List<VehicleUIModel>) {
         viewPagerListener = object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
-             }
+                shareViewModel.selectVehicle(position)
+            }
         }
-        carPagerAdapter = VehiclesAdapter(this, vehicalUIModels)
-        binding.viewpagerDishes.adapter = carPagerAdapter
-        binding.viewpagerDishes.getChildAt(0).overScrollMode = RecyclerView.OVER_SCROLL_NEVER
-        binding.viewpagerDishes.registerOnPageChangeCallback(viewPagerListener)
-        val compositePageTransformer = CompositePageTransformer()
-        binding.viewpagerDishes.setPageTransformer(compositePageTransformer)
-    }
-
-    override fun onVehicleCardClicked(position: Int) {
-
+        vehicalPagerAdapter = VehiclesAdapter(vehicalUIModels)
+        with(binding.viewpager) {
+            adapter = vehicalPagerAdapter
+            registerOnPageChangeCallback(viewPagerListener)
+            val compositePageTransformer = CompositePageTransformer()
+            setPageTransformer(compositePageTransformer)
+            offscreenPageLimit = 1
+            val recyclerView = getChildAt(0) as RecyclerView
+            recyclerView.apply {
+                val padding = 24.px
+                setPadding(padding, 0, padding, 0)
+                clipToPadding = false
+            }
+        }
     }
 }

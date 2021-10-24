@@ -11,13 +11,22 @@ import com.example.freenowapp.DEF_P2LONG
 import com.example.freenowapp.domain.GetVehicles
 import com.example.freenowapp.remote.model.toVehicleUIModel
 import com.example.freenowapp.ui.homeView.uiModel.VehicleUIModel
-import com.example.freenowapp.utils.ResponseStatues
+import com.example.freenowapp.utils.Status
+import com.example.freenowapp.utils.ViewState
 import kotlinx.coroutines.launch
+import java.text.FieldPosition
 
 class VehiclesViewModel(private val getVehicles: GetVehicles) : ViewModel() {
-    private val _vehicles = MutableLiveData<ResponseStatues<List<VehicleUIModel>>>()
-    val vehicles: LiveData<ResponseStatues<List<VehicleUIModel>>>
+    private val _viewState = MutableLiveData<ViewState>()
+    val viewState: LiveData<ViewState>
+        get() = _viewState
+    private val _vehicles = MutableLiveData<List<VehicleUIModel>>()
+    val vehicles: LiveData<List<VehicleUIModel>>
         get() = _vehicles
+
+    private val _selectedVehicle = MutableLiveData<VehicleUIModel>()
+    val selectedVehicle: LiveData<VehicleUIModel>
+        get() = _selectedVehicle
 
     init {
         getVehicles()
@@ -25,14 +34,19 @@ class VehiclesViewModel(private val getVehicles: GetVehicles) : ViewModel() {
 
     private fun getVehicles() {
         viewModelScope.launch {
-            _vehicles.value = ResponseStatues.loading()
-            try {
-                val response = getVehicles.execute(DEF_P1LAT, DEF_P1LONG, DEF_P2LAT, DEF_P2LONG)
-                _vehicles.value =
-                    ResponseStatues.success(response.vehicles.map { it.toVehicleUIModel() })
-            } catch (e: Exception) {
-                _vehicles.value = ResponseStatues.error(e.toString(), null)
+            _viewState.value = ViewState.Loading
+            val response = getVehicles.execute(DEF_P1LAT, DEF_P1LONG, DEF_P2LAT, DEF_P2LONG)
+            when (response.status) {
+                Status.SUCCESS -> {
+                    _viewState.value = ViewState.Success
+                    _vehicles.value = response.data?.map { it.toVehicleUIModel() }
+                }
+                Status.ERROR -> _viewState.value = ViewState.Error(response.message)
             }
         }
+    }
+
+    fun selectVehicle(position: Int) {
+        _selectedVehicle.value = _vehicles.value?.get(position)
     }
 }

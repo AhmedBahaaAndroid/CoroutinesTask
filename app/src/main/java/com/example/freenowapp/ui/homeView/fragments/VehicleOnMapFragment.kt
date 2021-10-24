@@ -19,7 +19,7 @@ import com.example.freenowapp.databinding.FragmentVehicalsOnMapBinding
 import com.example.freenowapp.remote.model.FleetType
 import com.example.freenowapp.ui.homeView.uiModel.VehicleUIModel
 import com.example.freenowapp.ui.homeView.viewModel.VehiclesViewModel
-import com.example.freenowapp.utils.Status
+import com.example.freenowapp.utils.ViewState
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -55,21 +55,36 @@ class VehicleOnMapFragment : Fragment(), OnMapReadyCallback {
 
     private fun setupObserver() {
         viewModel.vehicles.observe(viewLifecycleOwner, Observer {
-            when (it.status) {
-                Status.SUCCESS -> {
-                    hideLoading()
-                    it.data?.let { vehicles -> showVehiclesOnMap(vehicles) }
-                    showPagerFragment()
-                }
-                Status.LOADING -> {
-                    showLoading()
-                }
-                Status.ERROR -> {
+            showVehiclesOnMap(it)
+            showPagerFragment()
+        })
+        viewModel.viewState.observe(viewLifecycleOwner, Observer {
+            when (it) {
+                is ViewState.Error -> {
                     hideLoading()
                     showToastErorr(it.message)
                 }
+                ViewState.Loading -> {
+                    showLoading()
+                }
+                ViewState.Success -> {
+                    hideLoading()
+                }
             }
         })
+
+        viewModel.selectedVehicle.observe(viewLifecycleOwner, Observer {
+            moveToSelectedCar(it)
+        })
+    }
+
+    private fun moveToSelectedCar(vehicle: VehicleUIModel) {
+        val latitude = vehicle.coordinate?.latitude ?: return
+        val longitude = vehicle.coordinate.longitude ?: return
+
+        mMap.animateCamera(
+            CameraUpdateFactory.newLatLngZoom(LatLng(latitude, longitude), MAP_ZOOM_LEVEL)
+        )
     }
 
     private fun showPagerFragment() {
@@ -87,7 +102,7 @@ class VehicleOnMapFragment : Fragment(), OnMapReadyCallback {
         vehicles.forEach {
             val lat = it.coordinate?.latitude ?: return
             val long = it.coordinate.longitude ?: return
-             mMap.addMarker(
+            mMap.addMarker(
                 MarkerOptions()
                     .position(LatLng(lat, long))
                     .title(it.fleetType?.name)
@@ -108,7 +123,6 @@ class VehicleOnMapFragment : Fragment(), OnMapReadyCallback {
             )
         )
     }
-
 
 
     private fun getMarkerIcon(fleetType: FleetType): Bitmap? {
@@ -146,7 +160,7 @@ class VehicleOnMapFragment : Fragment(), OnMapReadyCallback {
         animationLoader.cancelAnimation()
     }
 
-    protected fun showToastErorr(message: String?) {
+    fun showToastErorr(message: String?) {
         hideLoading()
         val toast = Toast(context)
         toast.setText(message)
