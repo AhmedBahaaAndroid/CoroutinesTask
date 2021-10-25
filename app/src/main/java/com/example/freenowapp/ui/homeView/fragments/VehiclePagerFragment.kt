@@ -47,7 +47,7 @@ class VehiclePagerFragment : Fragment() {
         viewPagerListener = object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
-                shareViewModel.selectVehicle(position)
+                shareViewModel.onVehicleSelected(position)
             }
         }
         vehicalPagerAdapter = VehiclesAdapter(vehicalUIModels)

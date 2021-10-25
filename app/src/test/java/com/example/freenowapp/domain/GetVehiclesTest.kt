@@ -2,7 +2,7 @@ package com.example.freenowapp.domain
 
 import com.example.freenowapp.fakeVehiclesResponse
 import com.example.freenowapp.repo.VehiclesRepository
-import com.example.freenowapp.utils.ResponseStatues
+import com.example.freenowapp.utils.ResponseStatus
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
@@ -36,7 +36,7 @@ internal class GetVehiclesTest {
             val actualValue =
                 getVehicles.execute(53.694865, 9.757589, 53.394655, 10.099891)
             assertEquals(
-                actualValue, ResponseStatues.success(fakeVehiclesResponse.vehicles)
+                actualValue, ResponseStatus.success(fakeVehiclesResponse.vehicles)
             )
         }
     }

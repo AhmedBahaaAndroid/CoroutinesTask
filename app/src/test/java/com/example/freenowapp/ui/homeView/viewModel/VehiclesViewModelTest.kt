@@ -2,8 +2,8 @@ package com.example.freenowapp.ui.homeView.viewModel
 
 import com.example.freenowapp.*
 import com.example.freenowapp.domain.GetVehicles
-import com.example.freenowapp.remote.model.toVehicleUIModel
-import com.example.freenowapp.utils.ResponseStatues
+import com.example.freenowapp.ui.homeView.uiModel.toVehicleUIModel
+import com.example.freenowapp.utils.ResponseStatus
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -22,7 +22,6 @@ internal class VehiclesViewModelTest {
     @Mock
     private lateinit var getVehicles: GetVehicles
 
-
     @BeforeEach
     @ExperimentalCoroutinesApi
     fun setUp() {
@@ -32,7 +31,7 @@ internal class VehiclesViewModelTest {
                 getVehicles.execute(
                     DEF_P1LAT, DEF_P1LONG, DEF_P2LAT, DEF_P2LONG
                 )
-            ).thenReturn(ResponseStatues.success(fakeVehiclesResponse.vehicles))
+            ).thenReturn(ResponseStatus.success(fakeVehiclesResponse.vehicles))
         }
         vehiclesViewModel = VehiclesViewModel(getVehicles)
     }
@@ -47,7 +46,7 @@ internal class VehiclesViewModelTest {
 
     @Test
     fun `when select vehicle by index then vehicle  is returned with all required info `() {
-        vehiclesViewModel.selectVehicle(0)
+        vehiclesViewModel.onVehicleSelected(0)
         assertEquals(
             fakeVehiclesResponse.vehicles.map { it.toVehicleUIModel() }[0],
             vehiclesViewModel.selectedVehicle.value

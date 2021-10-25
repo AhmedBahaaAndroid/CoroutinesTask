@@ -4,13 +4,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.freenowapp.DEF_P1LAT
-import com.example.freenowapp.DEF_P1LONG
-import com.example.freenowapp.DEF_P2LAT
-import com.example.freenowapp.DEF_P2LONG
+import com.example.freenowapp.*
 import com.example.freenowapp.domain.GetVehicles
-import com.example.freenowapp.remote.model.toVehicleUIModel
 import com.example.freenowapp.ui.homeView.uiModel.VehicleUIModel
+import com.example.freenowapp.ui.homeView.uiModel.toVehicleUIModel
 import com.example.freenowapp.utils.Status
 import com.example.freenowapp.utils.ViewState
 import kotlinx.coroutines.Dispatchers
@@ -36,6 +33,7 @@ class VehiclesViewModel(private val getVehicles: GetVehicles) : ViewModel() {
         viewModelScope.launch(Dispatchers.Main) {
             _viewState.value = ViewState.Loading
             val response = getVehicles.execute(DEF_P1LAT, DEF_P1LONG, DEF_P2LAT, DEF_P2LONG)
+
             when (response.status) {
                 Status.SUCCESS -> {
                     _viewState.value = ViewState.Success
@@ -46,7 +44,7 @@ class VehiclesViewModel(private val getVehicles: GetVehicles) : ViewModel() {
         }
     }
 
-    fun selectVehicle(position: Int) {
+    fun onVehicleSelected (position: Int) {
         _selectedVehicle.value = _vehicles.value?.get(position)
     }
 }
