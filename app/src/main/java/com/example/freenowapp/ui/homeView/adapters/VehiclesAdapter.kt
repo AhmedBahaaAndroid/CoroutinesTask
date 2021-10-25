@@ -28,7 +28,6 @@ class VehiclesAdapter(
             with(binding) {
                 vehicalType.text =
                     itemView.context.getString(R.string.fleet_type, item.fleetType?.name?.lowercase() )
-                vehicalHeading.text = itemView.context.getString(R.string.heading, item.heading.toString())
                 Glide.with(itemView.context)
                     .asBitmap()
                     .fitCenter()
