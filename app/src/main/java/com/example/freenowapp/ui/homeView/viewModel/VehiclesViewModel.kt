@@ -29,6 +29,11 @@ class VehiclesViewModel(private val getVehicles: GetVehicles) : ViewModel() {
     val selectedVehicle: LiveData<VehicleUIModel>
         get() = _selectedVehicle
 
+    private val _vehiclesInBounds = MutableLiveData<List<VehicleUIModel>>()
+    val vehiclesInBounds: LiveData<List<VehicleUIModel>>
+        get() = _vehiclesInBounds
+
+
     init {
         getVehicles()
     }
@@ -37,7 +42,6 @@ class VehiclesViewModel(private val getVehicles: GetVehicles) : ViewModel() {
         viewModelScope.launch(Dispatchers.Main) {
             _viewState.value = ViewState.Loading
             val response = getVehicles.execute(DEF_P1LAT, DEF_P1LONG, DEF_P2LAT, DEF_P2LONG)
-
             when (response.status) {
                 Status.SUCCESS -> {
                     _viewState.value = ViewState.Success
@@ -46,6 +50,20 @@ class VehiclesViewModel(private val getVehicles: GetVehicles) : ViewModel() {
                 Status.ERROR -> _viewState.value = ViewState.Error(response.appException?.handleError())
             }
         }
+    }
+
+     fun getVehiclesListInBounds(p1Lat: Double, p1Lon: Double, p2Lat: Double, p2Lon: Double) {
+         viewModelScope.launch(Dispatchers.Main) {
+             _viewState.value = ViewState.Loading
+             val response = getVehicles.execute(p1Lat, p1Lon, p2Lat, p2Lon)
+             when (response.status) {
+                 Status.SUCCESS -> {
+                     _viewState.value = ViewState.Success
+                     _vehiclesInBounds.value = response.data?.map { it.toVehicleUIModel() }
+                 }
+                 Status.ERROR -> _viewState.value = ViewState.Error(response.appException?.handleError())
+             }
+         }
     }
 
     fun onVehicleSelected(position: Int) {

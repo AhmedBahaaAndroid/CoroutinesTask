@@ -77,6 +77,10 @@ class VehicleOnMapFragment : Fragment(), OnMapReadyCallback {
             }
         })
 
+        viewModel.vehiclesInBounds.observe(viewLifecycleOwner, Observer {
+            addVehiclesInBounds(it)
+        })
+
         viewModel.selectedVehicle.observe(viewLifecycleOwner, Observer {
             moveToSelectedCar(it)
         })
@@ -101,6 +105,15 @@ class VehicleOnMapFragment : Fragment(), OnMapReadyCallback {
         mMap.animateCamera(
             CameraUpdateFactory.newLatLngZoom(LatLng(latitude, longitude), MAP_ZOOM_LEVEL)
         )
+
+        mMap.setOnCameraIdleListener {
+            viewModel.getVehiclesListInBounds(
+                mMap.projection.visibleRegion.farLeft.latitude,
+                mMap.projection.visibleRegion.farLeft.longitude,
+                mMap.projection.visibleRegion.nearRight.latitude,
+                mMap.projection.visibleRegion.nearRight.longitude
+            )
+        }
     }
 
     private fun showPagerFragment() {
@@ -110,6 +123,24 @@ class VehicleOnMapFragment : Fragment(), OnMapReadyCallback {
         val fragTwo: Fragment = VehiclePagerFragment()
         ft.add(R.id.vehicals_containr_frame, fragTwo)
         ft.commit()
+    }
+
+    private fun addVehiclesInBounds(vehicles: List<VehicleUIModel>) {
+        vehicles.forEach {
+            val lat = it.coordinate?.latitude ?: return
+            val long = it.coordinate.longitude ?: return
+            mMap.addMarker(
+                MarkerOptions()
+                    .position(LatLng(lat, long))
+                    .title(it.fleetType?.name)
+            ).apply {
+                this!!.setIcon(BitmapDescriptorFactory.fromBitmap(it.fleetType?.let { fleetType ->
+                    getMarkerIcon(
+                        fleetType
+                    )
+                }!!))
+            }
+        }
     }
 
     private fun showVehiclesOnMap(vehicles: List<VehicleUIModel>) {
