@@ -1,6 +1,6 @@
 package com.example.freenowapp.repo
 
-import com.example.freenowapp.fakeVehiclesResponse
+import com.example.freenowapp.*
 import com.example.freenowapp.remote.VehiclesApi
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions
@@ -30,13 +30,21 @@ internal class VehiclesRepositoryTest {
         runBlocking {
             Mockito.`when`(
                 vehiclesApi.getVehiclesInBounds(
-                    53.694865, 9.757589, 53.394655, 10.099891
+                    TEST_DEF_P1LAT,
+                    TEST_DEF_P1LONG,
+                    TEST_DEF_P2LAT,
+                    TEST_DEF_P2LONG
                 )
             ).thenReturn(
                 fakeVehiclesResponse
             )
             val actualValue =
-                vehiclesRepository.getVehicles(53.694865, 9.757589, 53.394655, 10.099891)
+                vehiclesRepository.getVehicles(
+                    TEST_DEF_P1LAT,
+                    TEST_DEF_P1LONG,
+                    TEST_DEF_P2LAT,
+                    TEST_DEF_P2LONG
+                )
             Assertions.assertEquals(
                 actualValue, fakeVehiclesResponse
             )

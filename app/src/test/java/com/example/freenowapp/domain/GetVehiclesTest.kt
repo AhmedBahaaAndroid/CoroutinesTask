@@ -1,6 +1,6 @@
 package com.example.freenowapp.domain
 
-import com.example.freenowapp.fakeVehiclesResponse
+import com.example.freenowapp.*
 import com.example.freenowapp.repo.VehiclesRepository
 import com.example.freenowapp.utils.ResponseStatus
 import kotlinx.coroutines.runBlocking
@@ -31,10 +31,20 @@ internal class GetVehiclesTest {
     fun `when get vehicle then vehicle list is returned with list`() {
         runBlocking {
             Mockito.`when`(
-                vehiclesRepository.getVehicles(53.694865, 9.757589, 53.394655, 10.099891)
+                vehiclesRepository.getVehicles(
+                    TEST_DEF_P1LAT,
+                    TEST_DEF_P1LONG,
+                    TEST_DEF_P2LAT,
+                    TEST_DEF_P2LONG
+                )
             ).thenReturn(fakeVehiclesResponse)
             val actualValue =
-                getVehicles.execute(53.694865, 9.757589, 53.394655, 10.099891)
+                getVehicles.execute(
+                    TEST_DEF_P1LAT,
+                    TEST_DEF_P1LONG,
+                    TEST_DEF_P2LAT,
+                    TEST_DEF_P2LONG
+                )
             assertEquals(
                 actualValue, ResponseStatus.success(fakeVehiclesResponse.vehicles)
             )

@@ -29,7 +29,10 @@ internal class VehiclesViewModelTest {
         runBlocking {
             Mockito.`when`(
                 getVehicles.execute(
-                    DEF_P1LAT, DEF_P1LONG, DEF_P2LAT, DEF_P2LONG
+                    TEST_DEF_P1LAT,
+                    TEST_DEF_P1LONG,
+                    TEST_DEF_P2LAT,
+                    TEST_DEF_P2LONG
                 )
             ).thenReturn(ResponseStatus.success(fakeVehiclesResponse.vehicles))
         }
