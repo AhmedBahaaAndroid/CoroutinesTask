@@ -26,7 +26,7 @@ import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 class VehicleOnMapFragment : Fragment(), OnMapReadyCallback {
 
     private lateinit var binding: FragmentVehicalsOnMapBinding
-    private lateinit var mMap: GoogleMap
+    private lateinit var map: GoogleMap
     private val viewModel: VehiclesViewModel by sharedViewModel(VehiclesViewModel::class)
 
     override fun onCreateView(
@@ -52,50 +52,51 @@ class VehicleOnMapFragment : Fragment(), OnMapReadyCallback {
     }
 
     private fun moveToSelectedCar() {
-        val vehicle =
-            arguments?.getParcelable<VehicleUIModel>(VEHICLE_ARG)
-                ?: throw IllegalArgumentException("Argument can't be null")
+        val vehicle = arguments?.getParcelable<VehicleUIModel>(VEHICLE_ARG)
+            ?: throw IllegalArgumentException("Argument can't be null")
+
+        addVehicleMarker(vehicle = vehicle, zoomToMarker = true)
+
+        map.setOnCameraIdleListener {
+            with(map.projection.visibleRegion) {
+                viewModel.getVehiclesListInBounds(
+                    farLeft.latitude,
+                    farLeft.longitude,
+                    nearRight.latitude,
+                    nearRight.longitude
+                )
+            }
+        }
+    }
+
+    private fun addVehicleMarker(vehicle: VehicleUIModel, zoomToMarker: Boolean = false) {
         val latitude = vehicle.coordinate?.latitude ?: return
         val longitude = vehicle.coordinate.longitude ?: return
-        mMap.addMarker(
+
+        map.addMarker(
             MarkerOptions()
                 .position(LatLng(latitude, longitude))
                 .title(vehicle.fleetType?.name)
-        ).apply {
-            this!!.setIcon(BitmapDescriptorFactory.fromBitmap(vehicle.fleetType?.let { fleetType ->
+        )?.apply {
+            val bitmap = vehicle.fleetType?.let { fleetType ->
                 getMarkerIcon(
                     fleetType
                 )
-            }!!))
+            }
+            bitmap?.let {
+                setIcon(BitmapDescriptorFactory.fromBitmap(it))
+            }
         }
-        mMap.animateCamera(
-            CameraUpdateFactory.newLatLngZoom(LatLng(latitude, longitude), MAP_ZOOM_LEVEL)
-        )
-        mMap.setOnCameraIdleListener {
-            viewModel.getVehiclesListInBounds(
-                mMap.projection.visibleRegion.farLeft.latitude,
-                mMap.projection.visibleRegion.farLeft.longitude,
-                mMap.projection.visibleRegion.nearRight.latitude,
-                mMap.projection.visibleRegion.nearRight.longitude
+        if (zoomToMarker) {
+            map.animateCamera(
+                CameraUpdateFactory.newLatLngZoom(LatLng(latitude, longitude), MAP_ZOOM_LEVEL)
             )
         }
     }
 
     private fun addVehiclesInBounds(vehicles: List<VehicleUIModel>) {
         vehicles.forEach {
-            val lat = it.coordinate?.latitude ?: return
-            val long = it.coordinate.longitude ?: return
-            mMap.addMarker(
-                MarkerOptions()
-                    .position(LatLng(lat, long))
-                    .title(it.fleetType?.name)
-            ).apply {
-                this!!.setIcon(BitmapDescriptorFactory.fromBitmap(it.fleetType?.let { fleetType ->
-                    getMarkerIcon(
-                        fleetType
-                    )
-                }!!))
-            }
+            addVehicleMarker(vehicle = it)
         }
     }
 
@@ -113,10 +114,9 @@ class VehicleOnMapFragment : Fragment(), OnMapReadyCallback {
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
-        mMap = googleMap
+        map = googleMap
         moveToSelectedCar()
     }
-
 
     companion object {
         const val VEHICLE_ARG = "selected_vehicle"
@@ -130,5 +130,4 @@ class VehicleOnMapFragment : Fragment(), OnMapReadyCallback {
 
         private const val MAP_ZOOM_LEVEL = 100f
     }
-
 }

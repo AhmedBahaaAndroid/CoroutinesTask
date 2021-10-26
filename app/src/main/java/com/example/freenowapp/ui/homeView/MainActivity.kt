@@ -30,7 +30,6 @@ class MainActivity : AppCompatActivity() {
         supportFragmentManager.beginTransaction()
             .replace(R.id.container, VehicleListFragment())
             .commitNow()
-        binding.lifecycleOwner = this
         initRootView()
         initErrorView()
         observeViewModel()

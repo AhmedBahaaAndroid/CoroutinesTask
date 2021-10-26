@@ -35,11 +35,11 @@ class VehicleListFragment : Fragment() {
 
     private fun observeViewModel() {
         shareViewModel.vehicles.observe(viewLifecycleOwner, Observer {
-            setupViewPager(it)
+            setupRecyclerView(it)
         })
     }
 
-    private fun setupViewPager(vehicleUIModels: List<VehicleUIModel>) {
+    private fun setupRecyclerView(vehicleUIModels: List<VehicleUIModel>) {
         vehiclesAdapter = VehiclesAdapter(vehicleUIModels,
             VehiclesAdapter.VehiclesClickListener { vehicleId ->
                 shareViewModel.onVehicleSelected(vehicleId)

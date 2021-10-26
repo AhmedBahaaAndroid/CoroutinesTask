@@ -1,5 +1,6 @@
 package com.example.freenowapp.diModules
 
+import com.example.freenowapp.BuildConfig
 import com.example.freenowapp.domain.GetVehicles
 import com.example.freenowapp.network.RetrofitClient
 import com.example.freenowapp.remote.VehiclesApi
@@ -10,7 +11,7 @@ import org.koin.dsl.module
 
 val networkModule = module {
     single {
-        RetrofitClient.Builder("https://fake-poi-api.mytaxi.com")
+        RetrofitClient.Builder(BuildConfig.SERVER_URL)
             .build {
                 useDefaultLoggerInterceptor()
             }

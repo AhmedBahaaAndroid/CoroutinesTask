@@ -3,12 +3,10 @@ package com.example.freenowapp.network
 import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.CallAdapter
 import retrofit2.Converter
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.lang.reflect.Type
-import java.util.concurrent.TimeUnit
 
 class RetrofitClient (builder: Builder) {
 
@@ -57,9 +55,5 @@ class RetrofitClient (builder: Builder) {
         fun useDefaultLoggerInterceptor() = apply {
             this.useLoggerInterceptor = true
         }
-    }
-
-    companion object {
-        private const val DEFAULT_TIME_OUT_SECONDS = 25L
     }
 }
