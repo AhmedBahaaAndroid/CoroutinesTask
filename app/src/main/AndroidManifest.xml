@@ -19,7 +19,9 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyDAPm6G8DHj973dji7opVnTzOFIp90vazA" />
 
-        <activity android:name=".ui.homeView.MainActivity">
+        <activity
+            android:name=".ui.homeView.MainActivity"
+            android:configChanges="orientation|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

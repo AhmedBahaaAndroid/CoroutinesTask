@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">freeNowApp</string>
     <string name="fleet_type">Fleet type: %1$s</string>
+    <string name="no_internet_connection_error_msg">"Can't connect to the internet, check your connection and try again"</string>
+    <string name="timeout_error_msg">"Looks like the server is taking too long to respond, please try again later"</string>
+    <string name="un_expected_error_msg">"Oops ,Some thing went wrong "</string>
+    <string name="empty_state_view_retry_button_title">"Retry now"</string>
+    <string name="empty_state_view_back_button_title">"Go back"</string>
 </resources>

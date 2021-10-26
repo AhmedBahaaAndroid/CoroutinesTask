@@ -4,7 +4,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.freenowapp.*
+import com.example.freenowapp.DEF_P1LAT
+import com.example.freenowapp.DEF_P1LONG
+import com.example.freenowapp.DEF_P2LAT
+import com.example.freenowapp.DEF_P2LONG
 import com.example.freenowapp.domain.GetVehicles
 import com.example.freenowapp.ui.homeView.uiModel.VehicleUIModel
 import com.example.freenowapp.ui.homeView.uiModel.toVehicleUIModel
@@ -39,12 +42,16 @@ class VehiclesViewModel(private val getVehicles: GetVehicles) : ViewModel() {
                     _viewState.value = ViewState.Success
                     _vehicles.value = response.data?.map { it.toVehicleUIModel() }
                 }
-                Status.ERROR -> _viewState.value = ViewState.Error(response.message)
+                Status.ERROR -> _viewState.value = ViewState.Error(response.appException)
             }
         }
     }
 
-    fun onVehicleSelected (position: Int) {
+    fun onVehicleSelected(position: Int) {
         _selectedVehicle.value = _vehicles.value?.get(position)
+    }
+
+    fun refresh() {
+        getVehicles()
     }
 }

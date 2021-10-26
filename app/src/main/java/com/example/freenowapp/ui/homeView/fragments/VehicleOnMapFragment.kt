@@ -7,15 +7,18 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Observer
 import com.airbnb.lottie.LottieAnimationView
+import com.example.freenowapp.NO_CONNECTION
 import com.example.freenowapp.R
+import com.example.freenowapp.TIME_OUT
+import com.example.freenowapp.UNEXPECTED
 import com.example.freenowapp.databinding.FragmentVehicalsOnMapBinding
+import com.example.freenowapp.errorHandling.AppException
 import com.example.freenowapp.remote.model.FleetType
 import com.example.freenowapp.ui.homeView.uiModel.VehicleUIModel
 import com.example.freenowapp.ui.homeView.viewModel.VehiclesViewModel
@@ -33,6 +36,8 @@ class VehicleOnMapFragment : Fragment(), OnMapReadyCallback {
 
     private lateinit var binding: FragmentVehicalsOnMapBinding
     private lateinit var animationLoader: LottieAnimationView
+    private lateinit var errorAnimationLoader: LottieAnimationView
+
     private lateinit var mMap: GoogleMap
     val viewModel: VehiclesViewModel by sharedViewModel(VehiclesViewModel::class)
 
@@ -44,6 +49,7 @@ class VehicleOnMapFragment : Fragment(), OnMapReadyCallback {
         super.onCreateView(inflater, container, savedInstanceState)
         binding = FragmentVehicalsOnMapBinding.inflate(inflater, container, false)
         initRootView()
+        initErrorView()
         return binding.root
     }
 
@@ -62,12 +68,13 @@ class VehicleOnMapFragment : Fragment(), OnMapReadyCallback {
             when (it) {
                 is ViewState.Error -> {
                     hideLoading()
-                    showToastErorr(it.message)
+                    handleError(it.error)
                 }
                 ViewState.Loading -> {
                     showLoading()
                 }
                 ViewState.Success -> {
+                    hideErrorState()
                     hideLoading()
                 }
             }
@@ -76,6 +83,18 @@ class VehicleOnMapFragment : Fragment(), OnMapReadyCallback {
         viewModel.selectedVehicle.observe(viewLifecycleOwner, Observer {
             moveToSelectedCar(it)
         })
+    }
+
+    private fun hideErrorState() {
+        binding.errorView.visibility = View.GONE
+        errorAnimationLoader.visibility = View.GONE
+        errorAnimationLoader.cancelAnimation()
+    }
+
+    private fun showErrorState() {
+        binding.errorView.visibility = View.VISIBLE
+        errorAnimationLoader.visibility = View.VISIBLE
+        errorAnimationLoader.playAnimation()
     }
 
     private fun moveToSelectedCar(vehicle: VehicleUIModel) {
@@ -107,11 +126,11 @@ class VehicleOnMapFragment : Fragment(), OnMapReadyCallback {
                     .position(LatLng(lat, long))
                     .title(it.fleetType?.name)
             ).apply {
-                setIcon(BitmapDescriptorFactory.fromBitmap(it.fleetType?.let { fleetType ->
+                this!!.setIcon(BitmapDescriptorFactory.fromBitmap(it.fleetType?.let { fleetType ->
                     getMarkerIcon(
                         fleetType
                     )
-                }))
+                }!!))
             }
         }
         val initialLat = vehicles[0].coordinate?.latitude ?: return
@@ -149,6 +168,7 @@ class VehicleOnMapFragment : Fragment(), OnMapReadyCallback {
     }
 
     private fun showLoading() {
+        binding.errorView.visibility = View.GONE
         binding.animationView.visibility = View.VISIBLE
         animationLoader.visibility = View.VISIBLE
         animationLoader.playAnimation()
@@ -160,11 +180,31 @@ class VehicleOnMapFragment : Fragment(), OnMapReadyCallback {
         animationLoader.cancelAnimation()
     }
 
-    fun showToastErorr(message: String?) {
-        hideLoading()
-        val toast = Toast(context)
-        toast.setText(message)
-        toast.show()
+    private fun handleError(exception: AppException?) {
+        val errorMessage = when (exception?.errorCode) {
+            TIME_OUT -> getString(R.string.timeout_error_msg)
+            NO_CONNECTION -> getString(R.string.no_internet_connection_error_msg)
+            UNEXPECTED -> getString(R.string.un_expected_error_msg)
+            else -> getString(R.string.un_expected_error_msg)
+        }
+        binding.errorViewState.blockingStateDescriptionLabel.text = errorMessage
+        initErrorView()
+        showErrorState()
+    }
+
+    private fun initErrorView() {
+        errorAnimationLoader = binding.errorViewState.errorAnimatedImage
+        errorAnimationLoader.repeatCount = ValueAnimator.INFINITE
+        errorAnimationLoader.setAnimation(ERROR_LOADER_FILE_NAME)
+        with(binding.errorViewState) {
+            backButton.setOnClickListener {
+                requireActivity().onBackPressed()
+            }
+            retryButton.setOnClickListener {
+                viewModel.refresh()
+            }
+
+        }
     }
 
 
@@ -172,7 +212,7 @@ class VehicleOnMapFragment : Fragment(), OnMapReadyCallback {
         fun newInstance() = VehicleOnMapFragment()
         private const val MAP_ZOOM_LEVEL = 12f
         const val LOADER_FILE_NAME = "loader.json"
+        const val ERROR_LOADER_FILE_NAME = "errorimage.json"
     }
-
 
 }
