@@ -26,7 +26,6 @@ import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 class VehicleOnMapFragment : Fragment(), OnMapReadyCallback {
 
     private lateinit var binding: FragmentVehicalsOnMapBinding
-
     private lateinit var mMap: GoogleMap
     private val viewModel: VehiclesViewModel by sharedViewModel(VehiclesViewModel::class)
 
@@ -130,8 +129,6 @@ class VehicleOnMapFragment : Fragment(), OnMapReadyCallback {
             }
 
         private const val MAP_ZOOM_LEVEL = 100f
-        const val LOADER_FILE_NAME = "loader.json"
-        const val ERROR_LOADER_FILE_NAME = "errorimage.json"
     }
 
 }
