@@ -10,7 +10,8 @@ import com.example.freenowapp.remote.model.FleetType
 import com.example.freenowapp.ui.homeView.uiModel.VehicleUIModel
 
 class VehiclesAdapter(
-    private var carsList: List<VehicleUIModel>
+    private var carsList: List<VehicleUIModel>,
+    private val clickListener: VehiclesClickListener
 ) : RecyclerView.Adapter<VehiclesAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder =
@@ -19,15 +20,18 @@ class VehiclesAdapter(
     override fun getItemCount(): Int = carsList.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(carsList[position])
+        holder.bind(carsList[position],clickListener)
     }
 
     class ViewHolder private constructor(private val binding: VehicalCardItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: VehicleUIModel) {
+        fun bind(item: VehicleUIModel, clickListener: VehiclesClickListener) {
             with(binding) {
                 vehicalType.text =
-                    itemView.context.getString(R.string.fleet_type, item.fleetType?.name?.lowercase() )
+                    itemView.context.getString(
+                        R.string.fleet_type,
+                        item.fleetType?.name?.lowercase()
+                    )
                 Glide.with(itemView.context)
                     .asBitmap()
                     .fitCenter()
@@ -38,6 +42,9 @@ class VehiclesAdapter(
                         }
                     )
                     .into(vehicalImage)
+            }
+            itemView.setOnClickListener {
+                item.id?.let { id -> clickListener.onClick(id) }
             }
         }
 
@@ -50,4 +57,9 @@ class VehiclesAdapter(
             }
         }
     }
+
+    class VehiclesClickListener(val clickListener: (vehicleId: Int) -> Unit) {
+        fun onClick(vehicleId: Int) = clickListener(vehicleId)
+    }
+
 }

@@ -6,20 +6,16 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.recyclerview.widget.RecyclerView
-import androidx.viewpager2.widget.CompositePageTransformer
-import androidx.viewpager2.widget.ViewPager2
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.freenowapp.databinding.FragmentVehicalsPagerBinding
 import com.example.freenowapp.ui.homeView.adapters.VehiclesAdapter
 import com.example.freenowapp.ui.homeView.uiModel.VehicleUIModel
 import com.example.freenowapp.ui.homeView.viewModel.VehiclesViewModel
-import com.example.freenowapp.utils.px
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
-class VehiclePagerFragment : Fragment() {
+class VehicleListFragment : Fragment() {
     private lateinit var binding: FragmentVehicalsPagerBinding
-    private lateinit var viewPagerListener: ViewPager2.OnPageChangeCallback
-    private lateinit var vehicalPagerAdapter: VehiclesAdapter
+    private lateinit var vehiclesAdapter: VehiclesAdapter
     private val shareViewModel by sharedViewModel<VehiclesViewModel>()
 
     override fun onCreateView(
@@ -43,26 +39,16 @@ class VehiclePagerFragment : Fragment() {
         })
     }
 
-    private fun setupViewPager(vehicalUIModels: List<VehicleUIModel>) {
-        viewPagerListener = object : ViewPager2.OnPageChangeCallback() {
-            override fun onPageSelected(position: Int) {
-                super.onPageSelected(position)
-                shareViewModel.onVehicleSelected(position)
-            }
-        }
-        vehicalPagerAdapter = VehiclesAdapter(vehicalUIModels)
-        with(binding.viewpager) {
-            adapter = vehicalPagerAdapter
-            registerOnPageChangeCallback(viewPagerListener)
-            val compositePageTransformer = CompositePageTransformer()
-            setPageTransformer(compositePageTransformer)
-            offscreenPageLimit = 1
-            val recyclerView = getChildAt(0) as RecyclerView
-            recyclerView.apply {
-                val padding = 24.px
-                setPadding(padding, 0, padding, 0)
-                clipToPadding = false
-            }
+    private fun setupViewPager(vehicleUIModels: List<VehicleUIModel>) {
+        vehiclesAdapter = VehiclesAdapter(vehicleUIModels,
+            VehiclesAdapter.VehiclesClickListener { vehicleId ->
+                shareViewModel.onVehicleSelected(vehicleId)
+            })
+
+        with(binding.VehicalsRecyclerView) {
+            layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+            adapter = vehiclesAdapter
         }
     }
+
 }

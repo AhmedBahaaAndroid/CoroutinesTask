@@ -47,27 +47,29 @@ class VehiclesViewModel(private val getVehicles: GetVehicles) : ViewModel() {
                     _viewState.value = ViewState.Success
                     _vehicles.value = response.data?.map { it.toVehicleUIModel() }
                 }
-                Status.ERROR -> _viewState.value = ViewState.Error(response.appException?.handleError())
+                Status.ERROR -> _viewState.value =
+                    ViewState.Error(response.appException?.handleError())
             }
         }
     }
 
-     fun getVehiclesListInBounds(p1Lat: Double, p1Lon: Double, p2Lat: Double, p2Lon: Double) {
-         viewModelScope.launch(Dispatchers.Main) {
-             _viewState.value = ViewState.Loading
-             val response = getVehicles.execute(p1Lat, p1Lon, p2Lat, p2Lon)
-             when (response.status) {
-                 Status.SUCCESS -> {
-                     _viewState.value = ViewState.Success
-                     _vehiclesInBounds.value = response.data?.map { it.toVehicleUIModel() }
-                 }
-                 Status.ERROR -> _viewState.value = ViewState.Error(response.appException?.handleError())
-             }
-         }
+    fun getVehiclesListInBounds(p1Lat: Double, p1Lon: Double, p2Lat: Double, p2Lon: Double) {
+        viewModelScope.launch(Dispatchers.Main) {
+            _viewState.value = ViewState.Loading
+            val response = getVehicles.execute(p1Lat, p1Lon, p2Lat, p2Lon)
+            when (response.status) {
+                Status.SUCCESS -> {
+                    _viewState.value = ViewState.Success
+                    _vehiclesInBounds.value = response.data?.map { it.toVehicleUIModel() }
+                }
+                Status.ERROR -> _viewState.value =
+                    ViewState.Error(response.appException?.handleError())
+            }
+        }
     }
 
-    fun onVehicleSelected(position: Int) {
-        _selectedVehicle.value = _vehicles.value?.get(position)
+    fun onVehicleSelected(id: Int) {
+        _selectedVehicle.value = _vehicles.value?.find { it.id == id }
     }
 
     fun onRefreshData() {
