@@ -16,19 +16,12 @@ class RetrofitClient (builder: Builder) {
 
     init {
         val baseUrl = builder.baseUrl
-        val readTimeOut = builder.readTimeOutSeconds ?: DEFAULT_TIME_OUT_SECONDS
-        val writeTimeout = builder.writeTimeoutSeconds ?: DEFAULT_TIME_OUT_SECONDS
-        val connectTimeout = builder.connectTimeoutSeconds ?: DEFAULT_TIME_OUT_SECONDS
         val converterFactory = createGsonConverter(builder.jsonConverterAdaptersList)
         val logger = HttpLoggingInterceptor()
         logger.level = HttpLoggingInterceptor.Level.BODY
-
-
+        
         val okHttpClient = OkHttpClient().newBuilder()
             .addInterceptor(logger)
-            .readTimeout(readTimeOut, TimeUnit.SECONDS)
-            .writeTimeout(writeTimeout, TimeUnit.SECONDS)
-            .connectTimeout(connectTimeout, TimeUnit.SECONDS)
             .build()
 
         retrofit = Retrofit.Builder()
@@ -53,11 +46,8 @@ class RetrofitClient (builder: Builder) {
 
     class Builder(internal val baseUrl: String) {
 
-        internal var connectTimeoutSeconds: Long? = null
-        internal var readTimeOutSeconds: Long? = null
-        internal var writeTimeoutSeconds: Long? = null
-        internal var useLoggerInterceptor: Boolean = false
-        internal var jsonConverterAdaptersList: List<Pair<Type, Any>>? = emptyList()
+        private var useLoggerInterceptor: Boolean = false
+        var jsonConverterAdaptersList: List<Pair<Type, Any>>? = emptyList()
 
         fun build(buildBlock: Builder.() -> Unit = {}): RetrofitClient {
             buildBlock()
@@ -67,14 +57,6 @@ class RetrofitClient (builder: Builder) {
         fun useDefaultLoggerInterceptor() = apply {
             this.useLoggerInterceptor = true
         }
-
-        fun setCustomConverterAdapter(customJsonConverters: ICustomJsonConverters?) {
-            this.jsonConverterAdaptersList = customJsonConverters?.getConverters()
-        }
-    }
-
-    interface ICustomJsonConverters {
-        fun getConverters(): List<Pair<Type, Any>>?
     }
 
     companion object {

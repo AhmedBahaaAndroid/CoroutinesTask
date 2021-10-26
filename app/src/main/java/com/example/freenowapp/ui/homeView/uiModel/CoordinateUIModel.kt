@@ -1,10 +1,10 @@
 package com.example.freenowapp.ui.homeView.uiModel
 
-import com.example.freenowapp.remote.model.Vehicle
+import com.example.freenowapp.remote.model.Coordinate
 
-fun Vehicle.toVehicleUIModel() = VehicleUIModel(
-    id,
-    CoordinateUIModel(coordinate?.latitude, coordinate?.longitude),
-    fleetType,
-    heading
-)
+
+data class CoordinateUIModel(val latitude: Double?, val longitude: Double?)
+
+fun Coordinate.toUIModel(): CoordinateUIModel {
+    return CoordinateUIModel(latitude, longitude)
+}

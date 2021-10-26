@@ -13,7 +13,6 @@ val networkModule = module {
         RetrofitClient.Builder("https://fake-poi-api.mytaxi.com")
             .build {
                 useDefaultLoggerInterceptor()
-                setCustomConverterAdapter(getOrNull())
             }
     }
 }
