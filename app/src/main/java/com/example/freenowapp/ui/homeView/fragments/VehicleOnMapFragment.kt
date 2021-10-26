@@ -201,7 +201,7 @@ class VehicleOnMapFragment : Fragment(), OnMapReadyCallback {
                 requireActivity().onBackPressed()
             }
             retryButton.setOnClickListener {
-                viewModel.refresh()
+                viewModel.onRefreshData()
             }
 
         }

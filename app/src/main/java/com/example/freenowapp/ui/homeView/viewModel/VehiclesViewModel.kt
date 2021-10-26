@@ -51,7 +51,7 @@ class VehiclesViewModel(private val getVehicles: GetVehicles) : ViewModel() {
         _selectedVehicle.value = _vehicles.value?.get(position)
     }
 
-    fun refresh() {
+    fun onRefreshData() {
         getVehicles()
     }
 }
