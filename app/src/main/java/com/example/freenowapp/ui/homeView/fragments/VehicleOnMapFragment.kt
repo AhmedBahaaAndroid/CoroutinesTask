@@ -7,18 +7,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Observer
 import com.airbnb.lottie.LottieAnimationView
-import com.example.freenowapp.NO_CONNECTION
 import com.example.freenowapp.R
-import com.example.freenowapp.TIME_OUT
-import com.example.freenowapp.UNEXPECTED
 import com.example.freenowapp.databinding.FragmentVehicalsOnMapBinding
-import com.example.freenowapp.errorHandling.AppException
 import com.example.freenowapp.remote.model.FleetType
 import com.example.freenowapp.ui.homeView.uiModel.VehicleUIModel
 import com.example.freenowapp.ui.homeView.viewModel.VehiclesViewModel
@@ -39,7 +36,7 @@ class VehicleOnMapFragment : Fragment(), OnMapReadyCallback {
     private lateinit var errorAnimationLoader: LottieAnimationView
 
     private lateinit var mMap: GoogleMap
-    val viewModel: VehiclesViewModel by sharedViewModel(VehiclesViewModel::class)
+    private val viewModel: VehiclesViewModel by sharedViewModel(VehiclesViewModel::class)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -68,7 +65,7 @@ class VehicleOnMapFragment : Fragment(), OnMapReadyCallback {
             when (it) {
                 is ViewState.Error -> {
                     hideLoading()
-                    handleError(it.error)
+                    it.error?.let { errorMessage -> showErrorView(errorMessage) }
                 }
                 ViewState.Loading -> {
                     showLoading()
@@ -107,14 +104,12 @@ class VehicleOnMapFragment : Fragment(), OnMapReadyCallback {
     }
 
     private fun showPagerFragment() {
-        val fm: FragmentManager? = childFragmentManager
-        val ft: FragmentTransaction? = fm?.beginTransaction()
-        fm?.beginTransaction()
+        val fm: FragmentManager = childFragmentManager
+        val ft: FragmentTransaction = fm.beginTransaction()
+        fm.beginTransaction()
         val fragTwo: Fragment = VehiclePagerFragment()
-        val arguments = Bundle()
-        fragTwo.arguments = arguments
-        ft?.add(R.id.vehicals_containr_frame, fragTwo)
-        ft?.commit()
+        ft.add(R.id.vehicals_containr_frame, fragTwo)
+        ft.commit()
     }
 
     private fun showVehiclesOnMap(vehicles: List<VehicleUIModel>) {
@@ -180,14 +175,8 @@ class VehicleOnMapFragment : Fragment(), OnMapReadyCallback {
         animationLoader.cancelAnimation()
     }
 
-    private fun handleError(exception: AppException?) {
-        val errorMessage = when (exception?.errorCode) {
-            TIME_OUT -> getString(R.string.timeout_error_msg)
-            NO_CONNECTION -> getString(R.string.no_internet_connection_error_msg)
-            UNEXPECTED -> getString(R.string.un_expected_error_msg)
-            else -> getString(R.string.un_expected_error_msg)
-        }
-        binding.errorViewState.blockingStateDescriptionLabel.text = errorMessage
+    private fun showErrorView(@StringRes errorMessage: Int) {
+        binding.errorViewState.blockingStateDescriptionLabel.text = getString(errorMessage)
         initErrorView()
         showErrorState()
     }

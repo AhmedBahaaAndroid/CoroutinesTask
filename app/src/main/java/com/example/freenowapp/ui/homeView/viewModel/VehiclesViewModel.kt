@@ -9,6 +9,7 @@ import com.example.freenowapp.DEF_P1LONG
 import com.example.freenowapp.DEF_P2LAT
 import com.example.freenowapp.DEF_P2LONG
 import com.example.freenowapp.domain.GetVehicles
+import com.example.freenowapp.extensions.handleError
 import com.example.freenowapp.ui.homeView.uiModel.VehicleUIModel
 import com.example.freenowapp.ui.homeView.uiModel.toVehicleUIModel
 import com.example.freenowapp.utils.Status
@@ -42,7 +43,7 @@ class VehiclesViewModel(private val getVehicles: GetVehicles) : ViewModel() {
                     _viewState.value = ViewState.Success
                     _vehicles.value = response.data?.map { it.toVehicleUIModel() }
                 }
-                Status.ERROR -> _viewState.value = ViewState.Error(response.appException)
+                Status.ERROR -> _viewState.value = ViewState.Error(response.appException?.handleError())
             }
         }
     }

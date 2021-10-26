@@ -1,10 +1,11 @@
 package com.example.freenowapp.utils
 
-import com.example.freenowapp.errorHandling.AppException
+import androidx.annotation.StringRes
 
 sealed class ViewState {
     object Loading : ViewState()
     object Success : ViewState()
-    data class Error(val error: AppException?) : ViewState()
+
+    data class Error(@StringRes val  error: Int?) : ViewState()
 }
 
