@@ -1,12 +1,8 @@
-package com.example.freenowapp.utils
+package com.example.freenowapp.errorHandling
 
 import com.example.freenowapp.NO_CONNECTION
 import com.example.freenowapp.TIME_OUT
 import com.example.freenowapp.UNEXPECTED
-import com.example.freenowapp.errorHandling.AppException
-import com.example.freenowapp.errorHandling.NoConnectionException
-import com.example.freenowapp.errorHandling.TimeOutException
-import com.example.freenowapp.errorHandling.UnexpectedException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 
@@ -21,8 +17,7 @@ fun mapThrowable(throwable: Throwable): AppException {
         )
         else -> {
             UnexpectedException(
-                code = UNEXPECTED,
-                throwable = throwable
+                code = UNEXPECTED
             )
         }
     }

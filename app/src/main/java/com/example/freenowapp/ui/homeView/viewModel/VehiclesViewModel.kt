@@ -39,7 +39,7 @@ class VehiclesViewModel(private val getVehicles: GetVehicles) : ViewModel() {
     }
 
     private fun getVehicles() {
-        viewModelScope.launch(Dispatchers.Main) {
+        viewModelScope.launch {
             _viewState.value = ViewState.Loading
             val response = getVehicles.execute(DEF_P1LAT, DEF_P1LONG, DEF_P2LAT, DEF_P2LONG)
             when (response.status) {
@@ -54,7 +54,7 @@ class VehiclesViewModel(private val getVehicles: GetVehicles) : ViewModel() {
     }
 
     fun getVehiclesListInBounds(p1Lat: Double, p1Lon: Double, p2Lat: Double, p2Lon: Double) {
-        viewModelScope.launch(Dispatchers.Main) {
+        viewModelScope.launch {
             _viewState.value = ViewState.Loading
             val response = getVehicles.execute(p1Lat, p1Lon, p2Lat, p2Lon)
             when (response.status) {

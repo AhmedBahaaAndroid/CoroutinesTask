@@ -3,7 +3,7 @@ package com.example.freenowapp.domain
 import com.example.freenowapp.remote.model.Vehicle
 import com.example.freenowapp.repo.VehiclesRepository
 import com.example.freenowapp.utils.ResponseStatus
-import com.example.freenowapp.utils.mapThrowable
+import com.example.freenowapp.errorHandling.mapThrowable
 
 class GetVehicles(private val vehicleRepository: VehiclesRepository) {
     suspend fun execute(

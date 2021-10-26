@@ -6,7 +6,7 @@ import com.example.freenowapp.remote.model.Vehicle
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
-data class VehicleUIModel(
+data class VehicleUIModel( //TODO: make it Vehicle and the other one RemoteVehicle
     val id: Int?,
     val coordinate: CoordinateUIModel?,
     val fleetType: FleetType?,
