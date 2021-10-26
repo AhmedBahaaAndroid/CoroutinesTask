@@ -20,7 +20,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var animationLoader: LottieAnimationView
     private lateinit var errorAnimationLoader: LottieAnimationView
-    val viewModel: VehiclesViewModel by viewModel(VehiclesViewModel::class)
+    private val viewModel: VehiclesViewModel by viewModel(VehiclesViewModel::class)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
