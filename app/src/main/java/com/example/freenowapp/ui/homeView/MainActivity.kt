@@ -10,8 +10,8 @@ import androidx.lifecycle.Observer
 import com.airbnb.lottie.LottieAnimationView
 import com.example.freenowapp.R
 import com.example.freenowapp.databinding.ActivityMainBinding
-import com.example.freenowapp.ui.homeView.fragments.VehicleOnMapFragment
 import com.example.freenowapp.ui.homeView.fragments.VehicleListFragment
+import com.example.freenowapp.ui.homeView.fragments.VehicleOnMapFragment
 import com.example.freenowapp.ui.homeView.viewModel.VehiclesViewModel
 import com.example.freenowapp.utils.ViewState
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -52,10 +52,10 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         })
-        viewModel.selectedVehicle.observe(this , Observer {
+        viewModel.selectedVehicle.observe(this, Observer {
             supportFragmentManager.beginTransaction()
                 .replace(R.id.container, VehicleOnMapFragment.newInstance(selectedVehicle = it))
-                .commitNow()
+                .addToBackStack("map").commit()
         })
     }
 
@@ -108,7 +108,15 @@ class MainActivity : AppCompatActivity() {
             retryButton.setOnClickListener {
                 viewModel.onRefreshData()
             }
+        }
+    }
 
+    override fun onBackPressed() {
+        val count = supportFragmentManager.backStackEntryCount
+        if (count == 0) {
+            super.onBackPressed()
+        } else {
+            supportFragmentManager.popBackStack()
         }
     }
 
