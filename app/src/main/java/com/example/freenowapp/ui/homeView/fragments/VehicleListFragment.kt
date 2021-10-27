@@ -4,19 +4,23 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.freenowapp.bases.BaseFragment
 import com.example.freenowapp.databinding.FragmentVehicalsPagerBinding
 import com.example.freenowapp.ui.homeView.adapters.VehiclesAdapter
 import com.example.freenowapp.ui.homeView.uiModel.VehicleUIModel
+import com.example.freenowapp.ui.homeView.viewModel.VehiclesSharedViewModel
 import com.example.freenowapp.ui.homeView.viewModel.VehiclesViewModel
+import com.example.freenowapp.utils.ViewState
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class VehicleListFragment : Fragment() {
+class VehicleListFragment : BaseFragment() {
     private lateinit var binding: FragmentVehicalsPagerBinding
     private lateinit var vehiclesAdapter: VehiclesAdapter
-    private val shareViewModel by sharedViewModel<VehiclesViewModel>()
+    private val viewModel: VehiclesViewModel by viewModel()
+    private val sharedViewModel: VehiclesSharedViewModel by sharedViewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -25,7 +29,7 @@ class VehicleListFragment : Fragment() {
     ): View {
         super.onCreateView(inflater, container, savedInstanceState)
         binding = FragmentVehicalsPagerBinding.inflate(inflater, container, false)
-        return binding.root
+        return attachToRootView(binding.root)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -34,15 +38,34 @@ class VehicleListFragment : Fragment() {
     }
 
     private fun observeViewModel() {
-        shareViewModel.vehicles.observe(viewLifecycleOwner, Observer {
+        viewModel.viewState.observe(viewLifecycleOwner, Observer {
+            when (it) {
+                is ViewState.Error -> {
+                    hideLoading()
+                    showError(
+                        errorMessage = getString(it.error),
+                        positiveAction = { viewModel.onRefreshData() },
+                        negativeAction = { requireActivity().onBackPressed() }
+                    )
+                }
+                ViewState.Loading -> {
+                    showLoading()
+                }
+                ViewState.Success -> {
+                    hideErrorState()
+                    hideLoading()
+                }
+            }
+        })
+        viewModel.vehicles.observe(viewLifecycleOwner, Observer {
             setupRecyclerView(it)
         })
     }
 
     private fun setupRecyclerView(vehicleUIModels: List<VehicleUIModel>) {
         vehiclesAdapter = VehiclesAdapter(vehicleUIModels,
-            VehiclesAdapter.VehiclesClickListener { vehicleId ->
-                shareViewModel.onVehicleSelected(vehicleId)
+            VehiclesAdapter.VehiclesClickListener { vehicle ->
+                sharedViewModel.onVehicleSelected(vehicle)
             })
 
         with(binding.VehicalsRecyclerView) {

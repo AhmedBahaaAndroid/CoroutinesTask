@@ -24,7 +24,7 @@ class VehiclesOnMapViewModel(private val getVehicles: GetVehicles) : ViewModel()
         get() = _vehiclesInBounds
 
     fun getVehiclesListInBounds(p1Lat: Double, p1Lon: Double, p2Lat: Double, p2Lon: Double) {
-        viewModelScope.launch(Dispatchers.Main) {
+        viewModelScope.launch {
             _viewState.value = ViewState.Loading
             val response = getVehicles.execute(p1Lat, p1Lon, p2Lat, p2Lon)
             when (response.status) {
@@ -33,9 +33,14 @@ class VehiclesOnMapViewModel(private val getVehicles: GetVehicles) : ViewModel()
                     _vehiclesInBounds.value = response.data?.map { it.toVehicleUIModel() }
                 }
                 Status.ERROR -> _viewState.value =
-                    ViewState.Error(response.appException?.handleError())
+                    response.appException?.handleError()?.let { ViewState.Error(it) }
             }
         }
     }
+
+    fun onRefreshData(p1Lat: Double, p1Lon: Double, p2Lat: Double, p2Lon: Double) {
+
+    }
+
 
 }

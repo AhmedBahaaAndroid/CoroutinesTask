@@ -18,51 +18,6 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <include
-            android:id="@+id/errorViewState"
-            layout="@layout/error_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:visibility="visible" />
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/vehicals_containr_frame"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:background="@android:color/transparent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            tools:ignore="ContentDescription" />
-
-        <FrameLayout
-            android:id="@+id/animationView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#7FFFFFFF"
-            android:visibility="gone">
-
-            <com.airbnb.lottie.LottieAnimationView
-                android:id="@+id/animationLoader"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_gravity="center"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-        </FrameLayout>
-
-        <androidx.constraintlayout.widget.Group
-            android:id="@+id/errorView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone"
-            app:constraint_referenced_ids="errorViewState"
-            tools:visibility="visible" />
-
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

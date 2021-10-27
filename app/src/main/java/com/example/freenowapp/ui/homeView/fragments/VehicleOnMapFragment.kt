@@ -7,27 +7,30 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.example.freenowapp.R
+import com.example.freenowapp.bases.BaseFragment
 import com.example.freenowapp.databinding.FragmentVehicalsOnMapBinding
 import com.example.freenowapp.remote.model.FleetType
+import com.example.freenowapp.ui.homeView.uiModel.CoordinateUIModel
 import com.example.freenowapp.ui.homeView.uiModel.VehicleUIModel
-import com.example.freenowapp.ui.homeView.viewModel.VehiclesViewModel
+import com.example.freenowapp.ui.homeView.viewModel.VehiclesOnMapViewModel
+import com.example.freenowapp.utils.ViewState
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.GoogleMap.CancelableCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
-import org.koin.androidx.viewmodel.ext.android.sharedViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class VehicleOnMapFragment : Fragment(), OnMapReadyCallback {
+
+class VehicleOnMapFragment : BaseFragment() {
 
     private lateinit var binding: FragmentVehicalsOnMapBinding
     private lateinit var map: GoogleMap
-    private val viewModel: VehiclesViewModel by sharedViewModel(VehiclesViewModel::class)
+    private val viewModel: VehiclesOnMapViewModel by viewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -36,7 +39,7 @@ class VehicleOnMapFragment : Fragment(), OnMapReadyCallback {
     ): View {
         super.onCreateView(inflater, container, savedInstanceState)
         binding = FragmentVehicalsOnMapBinding.inflate(inflater, container, false)
-        return binding.root
+        return attachToRootView(binding.root)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -46,6 +49,35 @@ class VehicleOnMapFragment : Fragment(), OnMapReadyCallback {
     }
 
     private fun setupObserver() {
+        viewModel.viewState.observe(viewLifecycleOwner, Observer {
+            when (it) {
+                is ViewState.Error -> {
+                    hideLoading()
+                    showError(
+                        errorMessage = getString(it.error),
+                        positiveAction = {
+                            with(map.projection.visibleRegion) {
+                                viewModel.onRefreshData(
+                                    farLeft.latitude,
+                                    farLeft.longitude,
+                                    nearRight.latitude,
+                                    nearRight.longitude
+                                )
+                            }
+                        },
+                        negativeAction = { requireActivity().onBackPressed() }
+                    )
+                }
+                ViewState.Loading -> {
+                    showLoading()
+                }
+                ViewState.Success -> {
+                    hideErrorState()
+                    hideLoading()
+                }
+            }
+        })
+
         viewModel.vehiclesInBounds.observe(viewLifecycleOwner, Observer {
             addVehiclesInBounds(it)
         })
@@ -54,22 +86,46 @@ class VehicleOnMapFragment : Fragment(), OnMapReadyCallback {
     private fun moveToSelectedCar() {
         val vehicle = arguments?.getParcelable<VehicleUIModel>(VEHICLE_ARG)
             ?: throw IllegalArgumentException("Argument can't be null")
-
-        addVehicleMarker(vehicle = vehicle, zoomToMarker = true)
-
-        map.setOnCameraIdleListener {
-            with(map.projection.visibleRegion) {
-                viewModel.getVehiclesListInBounds(
-                    farLeft.latitude,
-                    farLeft.longitude,
-                    nearRight.latitude,
-                    nearRight.longitude
-                )
-            }
+        addVehicleMarker(vehicle = vehicle)
+        zoomToSelectedVehicle(vehicle.coordinate)
+        with(map.projection.visibleRegion) {
+            viewModel.getVehiclesListInBounds(
+                farLeft.latitude,
+                farLeft.longitude,
+                nearRight.latitude,
+                nearRight.longitude
+            )
         }
     }
 
-    private fun addVehicleMarker(vehicle: VehicleUIModel, zoomToMarker: Boolean = false) {
+    private fun zoomToSelectedVehicle(coordinate: CoordinateUIModel?) {
+        val latitude = coordinate?.latitude ?: return
+        val longitude = coordinate?.longitude ?: return
+        map.animateCamera(
+            CameraUpdateFactory.newLatLngZoom(
+                LatLng(latitude, longitude),
+                MAP_ZOOM_LEVEL
+            ), object : CancelableCallback {
+                override fun onFinish() {
+                    with(map.projection.visibleRegion) {
+                        viewModel.getVehiclesListInBounds(
+                            farLeft.latitude,
+                            farLeft.longitude,
+                            nearRight.latitude,
+                            nearRight.longitude
+                        )
+                    }
+                }
+
+                override fun onCancel() {
+                    // no thing to do here
+                }
+            }
+        )
+
+    }
+
+    private fun addVehicleMarker(vehicle: VehicleUIModel) {
         val latitude = vehicle.coordinate?.latitude ?: return
         val longitude = vehicle.coordinate.longitude ?: return
 
@@ -86,11 +142,6 @@ class VehicleOnMapFragment : Fragment(), OnMapReadyCallback {
             bitmap?.let {
                 setIcon(BitmapDescriptorFactory.fromBitmap(it))
             }
-        }
-        if (zoomToMarker) {
-            map.animateCamera(
-                CameraUpdateFactory.newLatLngZoom(LatLng(latitude, longitude), MAP_ZOOM_LEVEL)
-            )
         }
     }
 
@@ -110,13 +161,12 @@ class VehicleOnMapFragment : Fragment(), OnMapReadyCallback {
 
     private fun setupMap() {
         val map = childFragmentManager.findFragmentById(R.id.mapFragment) as SupportMapFragment
-        map.getMapAsync(this)
+        map.getMapAsync {
+            this@VehicleOnMapFragment.map = it
+            moveToSelectedCar()
+        }
     }
 
-    override fun onMapReady(googleMap: GoogleMap) {
-        map = googleMap
-        moveToSelectedCar()
-    }
 
     companion object {
         const val VEHICLE_ARG = "selected_vehicle"
@@ -128,6 +178,6 @@ class VehicleOnMapFragment : Fragment(), OnMapReadyCallback {
                 arguments = bundle
             }
 
-        private const val MAP_ZOOM_LEVEL = 100f
+        private const val MAP_ZOOM_LEVEL = 25f
     }
 }

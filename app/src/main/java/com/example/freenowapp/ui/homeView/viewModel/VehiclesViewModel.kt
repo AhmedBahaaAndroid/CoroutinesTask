@@ -18,18 +18,16 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class VehiclesViewModel(private val getVehicles: GetVehicles) : ViewModel() {
-
     private val _viewState = MutableLiveData<ViewState>()
     val viewState: LiveData<ViewState>
         get() = _viewState
-
     private val _vehicles = MutableLiveData<List<VehicleUIModel>>()
     val vehicles: LiveData<List<VehicleUIModel>>
         get() = _vehicles
 
-    private val _selectedVehicle = MutableLiveData<VehicleUIModel>()
-    val selectedVehicle: LiveData<VehicleUIModel>
-        get() = _selectedVehicle
+    private val _vehiclesInBounds = MutableLiveData<List<VehicleUIModel>>()
+    val vehiclesInBounds: LiveData<List<VehicleUIModel>>
+        get() = _vehiclesInBounds
 
 
     init {
@@ -46,16 +44,10 @@ class VehiclesViewModel(private val getVehicles: GetVehicles) : ViewModel() {
                     _vehicles.value = response.data?.map { it.toVehicleUIModel() }
                 }
                 Status.ERROR -> _viewState.value =
-                    ViewState.Error(response.appException?.handleError())
+                    response.appException?.handleError()?.let { ViewState.Error(it) }
             }
         }
     }
-
-
-    fun onVehicleSelected(id: Int) {
-        _selectedVehicle.value = _vehicles.value?.find { it.id == id }
-    }
-
     fun onRefreshData() {
         getVehicles()
     }

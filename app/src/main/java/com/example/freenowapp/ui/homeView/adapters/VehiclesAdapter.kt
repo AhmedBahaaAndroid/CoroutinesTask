@@ -48,7 +48,7 @@ class VehiclesAdapter(
                     .into(vehicalImage)
             }
             itemView.setOnClickListener {
-                item.id?.let { id -> clickListener.onClick(id) }
+                item.id?.let { id -> clickListener.onClick(item) }
             }
         }
 
@@ -62,7 +62,7 @@ class VehiclesAdapter(
         }
     }
 
-    class VehiclesClickListener(val clickListener: (vehicleId: Int) -> Unit) {
-        fun onClick(vehicleId: Int) = clickListener(vehicleId)
+    class VehiclesClickListener(val clickListener: (vehicle: VehicleUIModel) -> Unit) {
+        fun onClick(vehicle: VehicleUIModel) = clickListener(vehicle)
     }
 }

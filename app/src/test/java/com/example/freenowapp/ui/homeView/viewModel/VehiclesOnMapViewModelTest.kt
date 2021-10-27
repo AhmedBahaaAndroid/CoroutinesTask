@@ -15,9 +15,9 @@ import org.mockito.Mockito
 
 @ExperimentalCoroutinesApi
 @ExtendWith(InstantExecutorExtension::class)
-internal class VehiclesViewModelTest {
+internal class VehiclesOnMapViewModelTest {
 
-    private lateinit var vehiclesViewModel: VehiclesViewModel
+    private lateinit var vehiclesOnMapViewModel: VehiclesOnMapViewModel
 
     @Mock
     private lateinit var getVehicles: GetVehicles
@@ -26,6 +26,12 @@ internal class VehiclesViewModelTest {
     @ExperimentalCoroutinesApi
     fun setUp() {
         getVehicles = Mockito.mock(GetVehicles::class.java)
+
+        vehiclesOnMapViewModel = VehiclesOnMapViewModel(getVehicles)
+    }
+
+    @Test
+    fun `when get vehicles then vehicle list  is returned with all required info `() {
         runBlocking {
             Mockito.`when`(
                 getVehicles.execute(
@@ -36,23 +42,15 @@ internal class VehiclesViewModelTest {
                 )
             ).thenReturn(ResponseStatus.success(fakeVehiclesResponse.vehicles))
         }
-        vehiclesViewModel = VehiclesViewModel(getVehicles)
-    }
-
-    @Test
-    fun `when get vehicles then vehicle list  is returned with all required info `() {
+        vehiclesOnMapViewModel.getVehiclesListInBounds(
+            TEST_DEF_P1LAT,
+            TEST_DEF_P1LONG,
+            TEST_DEF_P2LAT,
+            TEST_DEF_P2LONG
+        )
         assertEquals(
             fakeVehiclesResponse.vehicles.map { it.toVehicleUIModel() },
-            vehiclesViewModel.vehicles.value
+            vehiclesOnMapViewModel.vehiclesInBounds.value
         )
     }
-
-//    @Test
-//    fun `when select vehicle by index then vehicle  is returned with all required info `() {
-//        vehiclesViewModel.onVehicleSelected(0)
-//        assertEquals(
-//            fakeVehiclesResponse.vehicles.map { it.toVehicleUIModel() }[0],
-//            vehiclesViewModel.selectedVehicle.value
-//        )
-//    }
 }
