@@ -1,20 +1,20 @@
 package com.example.freenowapp
 
-import com.example.freenowapp.remote.model.Coordinate
+import com.example.freenowapp.remote.model.RemoteCoordinate
 import com.example.freenowapp.remote.model.FleetType
 import com.example.freenowapp.remote.model.RemoteVehicleResponse
-import com.example.freenowapp.remote.model.Vehicle
+import com.example.freenowapp.remote.model.RemoteVehicle
 
 val fakeVehiclesResponse = RemoteVehicleResponse(
     listOf(
-        Vehicle(
+        RemoteVehicle(
             1,
-            Coordinate(11.00, 11.00),
+            RemoteCoordinate(11.00, 11.00),
             FleetType.POOLING
         ),
-        Vehicle(
+        RemoteVehicle(
             2,
-            Coordinate(11.00, 11.00),
+            RemoteCoordinate(11.00, 11.00),
             FleetType.TAXI
         )
     )

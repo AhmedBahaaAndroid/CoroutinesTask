@@ -3,14 +3,14 @@ package com.example.freenowapp.ui.homeView.viewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.freenowapp.ui.homeView.uiModel.VehicleUIModel
+import com.example.freenowapp.ui.homeView.uiModel.Vehicle
 
 class VehiclesSharedViewModel : ViewModel() {
-    private val _selectedVehicle = MutableLiveData<VehicleUIModel>()
-    val selectedVehicle: LiveData<VehicleUIModel>
+    private val _selectedVehicle = MutableLiveData<Vehicle>()
+    val selectedVehicle: LiveData<Vehicle>
         get() = _selectedVehicle
 
-    fun onVehicleSelected(vehicle: VehicleUIModel) {
+    fun onVehicleSelected(vehicle: Vehicle) {
         _selectedVehicle.value = vehicle
     }
 

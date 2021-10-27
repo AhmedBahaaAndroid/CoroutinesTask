@@ -6,11 +6,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.freenowapp.domain.GetVehicles
 import com.example.freenowapp.extensions.handleError
-import com.example.freenowapp.ui.homeView.uiModel.VehicleUIModel
+import com.example.freenowapp.ui.homeView.uiModel.Vehicle
 import com.example.freenowapp.ui.homeView.uiModel.toVehicleUIModel
 import com.example.freenowapp.utils.Status
 import com.example.freenowapp.utils.ViewState
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class VehiclesOnMapViewModel(private val getVehicles: GetVehicles) : ViewModel() {
@@ -19,8 +18,8 @@ class VehiclesOnMapViewModel(private val getVehicles: GetVehicles) : ViewModel()
     val viewState: LiveData<ViewState>
         get() = _viewState
 
-    private val _vehiclesInBounds = MutableLiveData<List<VehicleUIModel>>()
-    val vehiclesInBounds: LiveData<List<VehicleUIModel>>
+    private val _vehiclesInBounds = MutableLiveData<List<Vehicle>>()
+    val vehiclesInBounds: LiveData<List<Vehicle>>
         get() = _vehiclesInBounds
 
     fun getVehiclesListInBounds(p1Lat: Double, p1Lon: Double, p2Lat: Double, p2Lon: Double) {

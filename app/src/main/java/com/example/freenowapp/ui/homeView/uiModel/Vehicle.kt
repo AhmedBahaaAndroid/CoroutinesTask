@@ -2,20 +2,20 @@ package com.example.freenowapp.ui.homeView.uiModel
 
 import android.os.Parcelable
 import com.example.freenowapp.remote.model.FleetType
-import com.example.freenowapp.remote.model.Vehicle
+import com.example.freenowapp.remote.model.RemoteVehicle
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
-data class VehicleUIModel( //TODO: make it Vehicle and the other one RemoteVehicle
+data class Vehicle(
     val id: Int?,
-    val coordinate: CoordinateUIModel?,
+    val coordinate: Coordinate?,
     val fleetType: FleetType?,
     val heading: Double?
 ): Parcelable
 
-fun Vehicle.toVehicleUIModel() = VehicleUIModel(
+fun RemoteVehicle.toVehicleUIModel() = Vehicle(
     id,
-    coordinate?.toUIModel(),
+    remoteCoordinate?.toUIModel(),
     fleetType,
     heading
 )

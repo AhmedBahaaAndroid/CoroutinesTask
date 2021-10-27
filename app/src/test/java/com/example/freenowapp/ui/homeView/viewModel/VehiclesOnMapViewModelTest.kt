@@ -18,7 +18,6 @@ import org.mockito.Mockito
 internal class VehiclesOnMapViewModelTest {
 
     private lateinit var vehiclesOnMapViewModel: VehiclesOnMapViewModel
-
     @Mock
     private lateinit var getVehicles: GetVehicles
 
@@ -40,7 +39,7 @@ internal class VehiclesOnMapViewModelTest {
                     TEST_DEF_P2LAT,
                     TEST_DEF_P2LONG
                 )
-            ).thenReturn(ResponseStatus.success(fakeVehiclesResponse.vehicles))
+            ).thenReturn(ResponseStatus.success(fakeVehiclesResponse.remoteVehicles))
         }
         vehiclesOnMapViewModel.getVehiclesListInBounds(
             TEST_DEF_P1LAT,
@@ -49,7 +48,7 @@ internal class VehiclesOnMapViewModelTest {
             TEST_DEF_P2LONG
         )
         assertEquals(
-            fakeVehiclesResponse.vehicles.map { it.toVehicleUIModel() },
+            fakeVehiclesResponse.remoteVehicles.map { it.toVehicleUIModel() },
             vehiclesOnMapViewModel.vehiclesInBounds.value
         )
     }

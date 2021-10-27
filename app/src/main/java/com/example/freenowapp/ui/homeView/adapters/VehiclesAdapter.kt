@@ -7,12 +7,12 @@ import com.bumptech.glide.Glide
 import com.example.freenowapp.R
 import com.example.freenowapp.databinding.VehicalCardItemBinding
 import com.example.freenowapp.remote.model.FleetType
-import com.example.freenowapp.ui.homeView.uiModel.VehicleUIModel
+import com.example.freenowapp.ui.homeView.uiModel.Vehicle
 
 private const val FLEET_TYPE_NOT_AVAILABLE = "NA"
 
 class VehiclesAdapter(
-    private var carsList: List<VehicleUIModel>,
+    private var carsList: List<Vehicle>,
     private val clickListener: VehiclesClickListener
 ) : RecyclerView.Adapter<VehiclesAdapter.ViewHolder>() {
 
@@ -27,7 +27,7 @@ class VehiclesAdapter(
 
     class ViewHolder private constructor(private val binding: VehicalCardItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: VehicleUIModel, clickListener: VehiclesClickListener) {
+        fun bind(item: Vehicle, clickListener: VehiclesClickListener) {
             with(binding) {
                 val fleetType = item.fleetType?.name?.lowercase()
                 vehicalType.text =
@@ -62,7 +62,7 @@ class VehiclesAdapter(
         }
     }
 
-    class VehiclesClickListener(val clickListener: (vehicle: VehicleUIModel) -> Unit) {
-        fun onClick(vehicle: VehicleUIModel) = clickListener(vehicle)
+    class VehiclesClickListener(val clickListener: (vehicle: Vehicle) -> Unit) {
+        fun onClick(vehicle: Vehicle) = clickListener(vehicle)
     }
 }

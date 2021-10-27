@@ -46,7 +46,7 @@ internal class GetVehiclesTest {
                     TEST_DEF_P2LONG
                 )
             assertEquals(
-                actualValue, ResponseStatus.success(fakeVehiclesResponse.vehicles)
+                actualValue, ResponseStatus.success(fakeVehiclesResponse.remoteVehicles)
             )
         }
     }

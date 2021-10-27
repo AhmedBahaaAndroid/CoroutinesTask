@@ -34,7 +34,7 @@ internal class VehiclesViewModelTest {
                     TEST_DEF_P2LAT,
                     TEST_DEF_P2LONG
                 )
-            ).thenReturn(ResponseStatus.success(fakeVehiclesResponse.vehicles))
+            ).thenReturn(ResponseStatus.success(fakeVehiclesResponse.remoteVehicles))
         }
         vehiclesViewModel = VehiclesViewModel(getVehicles)
     }
@@ -42,7 +42,7 @@ internal class VehiclesViewModelTest {
     @Test
     fun `when get vehicles then vehicle list  is returned with all required info `() {
         assertEquals(
-            fakeVehiclesResponse.vehicles.map { it.toVehicleUIModel() },
+            fakeVehiclesResponse.remoteVehicles.map { it.toVehicleUIModel() },
             vehiclesViewModel.vehicles.value
         )
     }

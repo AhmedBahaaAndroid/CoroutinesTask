@@ -12,8 +12,8 @@ import com.example.freenowapp.R
 import com.example.freenowapp.bases.BaseFragment
 import com.example.freenowapp.databinding.FragmentVehicalsOnMapBinding
 import com.example.freenowapp.remote.model.FleetType
-import com.example.freenowapp.ui.homeView.uiModel.CoordinateUIModel
-import com.example.freenowapp.ui.homeView.uiModel.VehicleUIModel
+import com.example.freenowapp.ui.homeView.uiModel.Coordinate
+import com.example.freenowapp.ui.homeView.uiModel.Vehicle
 import com.example.freenowapp.ui.homeView.viewModel.VehiclesOnMapViewModel
 import com.example.freenowapp.utils.ViewState
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -84,7 +84,7 @@ class VehicleOnMapFragment : BaseFragment() {
     }
 
     private fun moveToSelectedCar() {
-        val vehicle = arguments?.getParcelable<VehicleUIModel>(VEHICLE_ARG)
+        val vehicle = arguments?.getParcelable<Vehicle>(VEHICLE_ARG)
             ?: throw IllegalArgumentException("Argument can't be null")
         addVehicleMarker(vehicle = vehicle)
         zoomToSelectedVehicle(vehicle.coordinate)
@@ -98,7 +98,7 @@ class VehicleOnMapFragment : BaseFragment() {
         }
     }
 
-    private fun zoomToSelectedVehicle(coordinate: CoordinateUIModel?) {
+    private fun zoomToSelectedVehicle(coordinate: Coordinate?) {
         val latitude = coordinate?.latitude ?: return
         val longitude = coordinate?.longitude ?: return
         map.animateCamera(
@@ -125,7 +125,7 @@ class VehicleOnMapFragment : BaseFragment() {
 
     }
 
-    private fun addVehicleMarker(vehicle: VehicleUIModel) {
+    private fun addVehicleMarker(vehicle: Vehicle) {
         val latitude = vehicle.coordinate?.latitude ?: return
         val longitude = vehicle.coordinate.longitude ?: return
 
@@ -145,7 +145,7 @@ class VehicleOnMapFragment : BaseFragment() {
         }
     }
 
-    private fun addVehiclesInBounds(vehicles: List<VehicleUIModel>) {
+    private fun addVehiclesInBounds(vehicles: List<Vehicle>) {
         vehicles.forEach {
             addVehicleMarker(vehicle = it)
         }
@@ -170,7 +170,7 @@ class VehicleOnMapFragment : BaseFragment() {
 
     companion object {
         const val VEHICLE_ARG = "selected_vehicle"
-        fun newInstance(selectedVehicle: VehicleUIModel) =
+        fun newInstance(selectedVehicle: Vehicle) =
             VehicleOnMapFragment().apply {
                 val bundle = Bundle().apply {
                     putParcelable(VEHICLE_ARG, selectedVehicle)

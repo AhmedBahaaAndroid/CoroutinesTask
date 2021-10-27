@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.freenowapp.bases.BaseFragment
 import com.example.freenowapp.databinding.FragmentVehicalsPagerBinding
 import com.example.freenowapp.ui.homeView.adapters.VehiclesAdapter
-import com.example.freenowapp.ui.homeView.uiModel.VehicleUIModel
+import com.example.freenowapp.ui.homeView.uiModel.Vehicle
 import com.example.freenowapp.ui.homeView.viewModel.VehiclesSharedViewModel
 import com.example.freenowapp.ui.homeView.viewModel.VehiclesViewModel
 import com.example.freenowapp.utils.ViewState
@@ -62,8 +62,8 @@ class VehicleListFragment : BaseFragment() {
         })
     }
 
-    private fun setupRecyclerView(vehicleUIModels: List<VehicleUIModel>) {
-        vehiclesAdapter = VehiclesAdapter(vehicleUIModels,
+    private fun setupRecyclerView(vehicles: List<Vehicle>) {
+        vehiclesAdapter = VehiclesAdapter(vehicles,
             VehiclesAdapter.VehiclesClickListener { vehicle ->
                 sharedViewModel.onVehicleSelected(vehicle)
             })

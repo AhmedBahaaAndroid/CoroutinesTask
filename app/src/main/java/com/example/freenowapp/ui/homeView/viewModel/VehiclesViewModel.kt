@@ -10,7 +10,7 @@ import com.example.freenowapp.DEF_P2LAT
 import com.example.freenowapp.DEF_P2LONG
 import com.example.freenowapp.domain.GetVehicles
 import com.example.freenowapp.extensions.handleError
-import com.example.freenowapp.ui.homeView.uiModel.VehicleUIModel
+import com.example.freenowapp.ui.homeView.uiModel.Vehicle
 import com.example.freenowapp.ui.homeView.uiModel.toVehicleUIModel
 import com.example.freenowapp.utils.Status
 import com.example.freenowapp.utils.ViewState
@@ -21,12 +21,12 @@ class VehiclesViewModel(private val getVehicles: GetVehicles) : ViewModel() {
     private val _viewState = MutableLiveData<ViewState>()
     val viewState: LiveData<ViewState>
         get() = _viewState
-    private val _vehicles = MutableLiveData<List<VehicleUIModel>>()
-    val vehicles: LiveData<List<VehicleUIModel>>
+    private val _vehicles = MutableLiveData<List<Vehicle>>()
+    val vehicles: LiveData<List<Vehicle>>
         get() = _vehicles
 
-    private val _vehiclesInBounds = MutableLiveData<List<VehicleUIModel>>()
-    val vehiclesInBounds: LiveData<List<VehicleUIModel>>
+    private val _vehiclesInBounds = MutableLiveData<List<Vehicle>>()
+    val vehiclesInBounds: LiveData<List<Vehicle>>
         get() = _vehiclesInBounds
 
 
