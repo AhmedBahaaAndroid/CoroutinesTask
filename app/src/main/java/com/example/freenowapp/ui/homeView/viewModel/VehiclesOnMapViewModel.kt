@@ -38,7 +38,7 @@ class VehiclesOnMapViewModel(private val getVehicles: GetVehicles) : ViewModel()
     }
 
     fun onRefreshData(p1Lat: Double, p1Lon: Double, p2Lat: Double, p2Lon: Double) {
-
+        getVehiclesListInBounds(p1Lat, p1Lon, p2Lat, p2Lon)
     }
 
 
