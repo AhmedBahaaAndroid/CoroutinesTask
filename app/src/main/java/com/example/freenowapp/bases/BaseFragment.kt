@@ -35,10 +35,6 @@ abstract class BaseFragment : Fragment() {
         errorViewState = rootView.findViewById(R.id.errorViewState)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-    }
-
     protected fun attachToRootView(content: View): View {
         (contentView as ViewGroup).addView(content)
         return rootView

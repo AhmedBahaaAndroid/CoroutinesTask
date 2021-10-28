@@ -6,4 +6,5 @@
     <string name="un_expected_error_msg">"Oops ,Some thing went wrong "</string>
     <string name="empty_state_view_retry_button_title">"Retry now"</string>
     <string name="empty_state_view_back_button_title">"Go back"</string>
+    <string name="fleet_type_not_available">NA</string>
 </resources>

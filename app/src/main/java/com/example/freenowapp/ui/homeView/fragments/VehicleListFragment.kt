@@ -73,5 +73,4 @@ class VehicleListFragment : BaseFragment() {
             adapter = vehiclesAdapter
         }
     }
-
 }

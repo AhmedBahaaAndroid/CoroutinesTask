@@ -9,8 +9,6 @@ import com.example.freenowapp.databinding.VehicalCardItemBinding
 import com.example.freenowapp.remote.model.FleetType
 import com.example.freenowapp.ui.homeView.uiModel.Vehicle
 
-private const val FLEET_TYPE_NOT_AVAILABLE = "NA"
-
 class VehiclesAdapter(
     private var carsList: List<Vehicle>,
     private val clickListener: VehiclesClickListener
@@ -30,10 +28,11 @@ class VehiclesAdapter(
         fun bind(item: Vehicle, clickListener: VehiclesClickListener) {
             with(binding) {
                 val fleetType = item.fleetType?.name?.lowercase()
+                    ?: itemView.context.getString(R.string.fleet_type_not_available)
                 vehicalType.text =
                     itemView.context.getString(
                         R.string.fleet_type,
-                        fleetType ?: FLEET_TYPE_NOT_AVAILABLE
+                        fleetType
                     )
 
                 Glide.with(itemView.context)

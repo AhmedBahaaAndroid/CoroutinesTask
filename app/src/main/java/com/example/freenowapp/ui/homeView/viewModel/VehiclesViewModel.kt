@@ -25,11 +25,6 @@ class VehiclesViewModel(private val getVehicles: GetVehicles) : ViewModel() {
     val vehicles: LiveData<List<Vehicle>>
         get() = _vehicles
 
-    private val _vehiclesInBounds = MutableLiveData<List<Vehicle>>()
-    val vehiclesInBounds: LiveData<List<Vehicle>>
-        get() = _vehiclesInBounds
-
-
     init {
         getVehicles()
     }
